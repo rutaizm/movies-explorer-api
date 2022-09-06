@@ -9,30 +9,8 @@ const getMovies = (req, res, next) => {
 };
 
 const createMovie = (req, res, next) => {
-  const {
-    country,
-    director,
-    duration,
-    year,
-    description,
-    image,
-    trailer,
-    nameRU,
-    nameEN,
-    thumbnail,
-    movieId
-  } = req.body;
-  Movie.create({country,
-    director,
-    duration,
-    year,
-    description,
-    image,
-    trailer,
-    nameRU,
-    nameEN,
-    thumbnail,
-    movieId })
+  const { owner } = req.user._id;
+  Movie.create({owner, ...req.body })
   .then (movie => res.send(movie))
   .catch(err)
   .catch(next)
