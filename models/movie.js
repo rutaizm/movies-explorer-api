@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const validator = require('validator');
 
 const movieSchema = new mongoose.Schema({
   country: {
@@ -14,11 +13,11 @@ const movieSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
-  year:{
+  year: {
     type: Number,
     required: true,
   },
-  description:{
+  description: {
     type: String,
     required: true,
   },
@@ -32,7 +31,7 @@ const movieSchema = new mongoose.Schema({
       message: 'Неверно указана ссылка',
     },
   },
-  trailerLink:{
+  trailerLink: {
     type: String,
     required: true,
     validate: {
@@ -42,7 +41,7 @@ const movieSchema = new mongoose.Schema({
       message: 'Неверно указана ссылка',
     },
   },
-  thumbnail:{
+  thumbnail: {
     type: String,
     required: true,
     validate: {
@@ -55,7 +54,7 @@ const movieSchema = new mongoose.Schema({
   owner: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'user',
-    required:true,
+    required: true,
   },
   nameRU: {
     type: String,

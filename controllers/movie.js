@@ -5,14 +5,14 @@ const NotFound = require('../errors/NotFound');
 const getMovies = (req, res, next) => {
   Movie.find({})
     .populate('owner')
-    .then(movie => res.send(movie))
-    .catch(next)
+    .then((movie) => res.send(movie))
+    .catch(next);
 };
 
 const createMovie = (req, res, next) => {
   const owner = req.user._id;
 
-  Movie.create({owner, ...req.body})
+  Movie.create({ owner, ...req.body })
     .then((movie) => res.send(movie))
     .catch((err) => {
       if (err.name === 'ValidationError') {
@@ -32,10 +32,10 @@ const deleteMovie = (req, res, next) => {
         next(new BadRequest('Вы не можете удалить фильм, добавленный другим пользователем!'));
       } else {
         movie.remove()
-        .then(() => res.send({message: 'Фильм удален'}))
+          .then(() => res.send({ message: 'Фильм удален' }));
       }
     })
-    .catch(next)
+    .catch(next);
 };
 
 module.exports = { getMovies, createMovie, deleteMovie };

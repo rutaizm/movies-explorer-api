@@ -5,7 +5,7 @@ const bcrypt = require('bcrypt');
 const userSchema = new mongoose.Schema({
   email: {
     type: String,
-    required: [true,'Необходимо указать почту'],
+    required: [true, 'Необходимо указать почту'],
     unique: true,
     validate: {
       validator(email) {
@@ -17,24 +17,24 @@ const userSchema = new mongoose.Schema({
   password: {
     type: String,
     required: [true, 'Необходимо указать пароль'],
-    select: false
+    select: false,
   },
   name: {
     type: String,
     minlength: [2, 'Поле {PATH} должно быть минимум 2 символа'],
     maxlength: [30, 'Поле {PATH} может быть максимум 30 символов'],
-  }
+  },
 });
 
 userSchema.statics.findUserByCredentials = function (email, password) {
   return this.findOne({ email }).select('+password')
     .then((user) => {
-      if(!user) {
+      if (!user) {
         return Promise.reject(new Error('Неправильные почта или пароль'));
       }
       return bcrypt.compare(password, user.password)
         .then((matched) => {
-          if(!matched) {
+          if (!matched) {
             return Promise.reject(new Error('Неправильные почта или пароль'));
           }
           return user;

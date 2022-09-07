@@ -14,4 +14,4 @@ router.use(auth);
 router.use('/users', routesUser);
 router.use('/movies', routesMovies);
 
-module.exports = {router};
+module.exports = { router };

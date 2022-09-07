@@ -1,24 +1,24 @@
 const { celebrate, Joi } = require('celebrate');
 
 const validateSignUp = celebrate({
-  body:Joi.object().keys({
+  body: Joi.object().keys({
     email: Joi.string().required().email(),
     password: Joi.string().required(),
-    name: Joi.string().required().min(8).max(30)
+    name: Joi.string().required().min(8).max(30),
   }),
 });
 
 const validateSignIn = celebrate({
-  body:Joi.object().keys({
-    email:Joi.string().required().email(),
-    password:Joi.string().required(),
+  body: Joi.object().keys({
+    email: Joi.string().required().email(),
+    password: Joi.string().required(),
   }),
 });
 
 const validateUpdateUser = celebrate({
   body: Joi.object().keys({
     name: Joi.string().min(2).max(30),
-    email:Joi.string().required().email(),
+    email: Joi.string().required().email(),
   }),
 });
 
@@ -39,8 +39,11 @@ const validateCreateMovie = celebrate({
 
 const validateDeleteMovie = celebrate({
   params: Joi.object().keys({
-    id:Joi.string().required().alphanum().length(24).hex(),
+    id: Joi.string().required().alphanum().length(24)
+      .hex(),
   }),
 });
 
-module.exports = { validateSignUp, validateSignIn, validateUpdateUser, validateCreateMovie, validateDeleteMovie };
+module.exports = {
+  validateSignUp, validateSignIn, validateUpdateUser, validateCreateMovie, validateDeleteMovie,
+};
