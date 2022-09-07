@@ -35,8 +35,6 @@ const updateUser = (req, res, next) => {
 const createUser = (req, res, next) => {
 
   const {email, password, name} = req.body;
-  console.log(email, password, name);
-
   bcrypt.hash(password, 10)
   .then((hash) => User.create({
     email, password: hash, name,
