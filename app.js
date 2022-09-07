@@ -3,13 +3,9 @@ const app = express();
 
 const { PORT=3000 } = process.env
 
-const routesUser = require('./routes/user');
-const routesMovies = require('./routes/movie');
-const auth = require('./middlewares/auth');
-const { createUser, login } = require('./controllers/user');
-const {errorHandler} = require('./middlewares/errorHandler');
-const { validateSignUp, validateSignIn } = require('./middlewares/validation');
+const { router } = require('./routes/index');
 
+const {errorHandler} = require('./middlewares/errorHandler');
 const { errors } = require('celebrate');
 
 const mongoose = require('mongoose');
@@ -20,13 +16,7 @@ const bodyParser = require('body-parser');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.post('/signup', validateSignUp, createUser);
-app.post('/signin', validateSignIn, login);
-
-app.use(auth);
-
-app.use('/users', routesUser);
-app.use('/movies', routesMovies);
+app.use('/', router);
 
 app.use(errors);
 app.use(errorHandler);
