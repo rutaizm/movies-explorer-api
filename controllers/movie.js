@@ -1,11 +1,11 @@
-const movie = require('../models/movie');
 const Movie = require('../models/movie');
+const BadRequest = require('../errors/BadRequest');
+const NotFound = require('../errors/NotFound');
 
 const getMovies = (req, res, next) => {
   Movie.find({})
-    .populate('user')
+    .populate('owner')
     .then(movie => res.send(movie))
-    .catch(err => err.code)
     .catch(next)
 };
 
@@ -14,14 +14,27 @@ const createMovie = (req, res, next) => {
 
   Movie.create({owner, ...req.body})
     .then((movie) => res.send(movie))
-    .catch((err) => err.code)
-    .catch(next)
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        return next(new BadRequest('Неверно указаны данные фильма!'));
+      }
+      return next(err);
+    });
 };
 
 const deleteMovie = (req, res, next) => {
-  Movie.findByIdAndRemove(req.params.id)
-    .then(movie => res.send(movie))
-    .catch((err) => err.code)
+  Movie.findById(req.params.id)
+    .then((movie) => {
+      if (!movie) {
+        throw new NotFound('Такого фильма нет');
+      }
+      if (JSON.stringify(movie.owner) !== JSON.stringify(req.user._id)) {
+        next(new BadRequest('Вы не можете удалить фильм, добавленный другим пользователем!'));
+      } else {
+        movie.remove()
+        .then(() => res.send({message: 'Фильм удален'}))
+      }
+    })
     .catch(next)
 };
 
