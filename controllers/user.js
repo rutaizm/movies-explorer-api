@@ -1,6 +1,8 @@
 const User = require('../models/user');
-const bcryptjs = require('bcryptjs');
+const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+
+const { JWT_SECRET = 'our-secret-precious' } = process.env;
 
 const getUser = (req, res, next) => {
   User.findById(req.user._id)
@@ -18,25 +20,30 @@ const updateUser = (req, res, next) => {
 }
 
 const createUser = (req, res, next) => {
-  bcryptjs.hash(req.body.password, 10)
-  .then(hash => User.create({
-    email: req.body.email,
-    password: hash,
-    name: req.body.name,
+
+  const {email, password, name} = req.body;
+  console.log(email, password, name);
+
+  bcrypt.hash(password, 10)
+  .then((hash) => User.create({
+    email, password: hash, name,
   }))
-  .then(user => res.send(user))
-  .catch(err)
+  .then((user) => res.status(200).send({
+    email:user.email, name:user.name, _id: user._id,
+  }))
+  .catch((err) => err.code)
   .catch(next);
 }
 
 const login = (req, res, next) => {
   const { email, password } = req.body;
-  return User.findByCredentials(email, password)
+  return User.findUserByCredentials(email, password)
     .then((user) => {
-      const token = jwt.sign({ _id: user._id }, 'our-secret-precious');
+      const token = jwt.sign({ _id: user._id }, JWT_SECRET, {expiresIn: '7d'});
       res.send({token});
     })
-    .catch(err);
+    .catch((err) => err.code)
+    .catch(next);
 }
 
 module.exports = { getUser, updateUser, createUser, login};
