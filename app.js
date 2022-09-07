@@ -1,3 +1,4 @@
+const helmet = require('helmet');
 const express = require('express');
 
 const mongoose = require('mongoose');
@@ -17,6 +18,7 @@ mongoose.connect('mongodb://localhost:27017/bitfilmsdb');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
+app.use(helmet());
 app.use('/', router);
 
 app.use(errors);
