@@ -12,15 +12,21 @@ const { errors } = require('celebrate');
 const { router } = require('./routes/index');
 
 const { errorHandler } = require('./middlewares/errorHandler');
+const { requestLogger, errorLogger } = require('./middlewares/logger');
 
 mongoose.connect('mongodb://localhost:27017/bitfilmsdb');
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
+app.use(requestLogger);
+
 app.use(helmet());
 app.use('/', router);
 
+app.use(errorLogger);
+
 app.use(errors);
 app.use(errorHandler);
+
 app.listen(PORT);
