@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
 
+const validator = require('validator');
+
 const movieSchema = new mongoose.Schema({
   country: {
     type: String,
@@ -25,30 +27,21 @@ const movieSchema = new mongoose.Schema({
     type: String,
     required: true,
     validate: {
-      validator(link) {
-        return /^(https?:\/\/)?([\da-z.-]+).([a-z.]{2,6})([/\w.-]*)*\/?$/g.test(link);
-      },
-      message: 'Неверно указана ссылка',
+      validator: (link) => validator.isURL(link),
     },
   },
   trailerLink: {
     type: String,
     required: true,
     validate: {
-      validator(link) {
-        return /^(https?:\/\/)?([\da-z.-]+).([a-z.]{2,6})([/\w.-]*)*\/?$/g.test(link);
-      },
-      message: 'Неверно указана ссылка',
+      validator: (link) => validator.isURL(link),
     },
   },
   thumbnail: {
     type: String,
     required: true,
     validate: {
-      validator(link) {
-        return /^(https?:\/\/)?([\da-z.-]+).([a-z.]{2,6})([/\w.-]*)*\/?$/g.test(link);
-      },
-      message: 'Неверно указана ссылка',
+      validator: (link) => validator.isURL(link),
     },
   },
   owner: {

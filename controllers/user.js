@@ -6,6 +6,7 @@ const User = require('../models/user');
 const BadRequest = require('../errors/BadRequest');
 const NotFound = require('../errors/NotFound');
 const Conflict = require('../errors/Conflict');
+const Auth = require('../errors/Auth');
 
 const { NODE_ENV, JWT_SECRET } = process.env;
 
@@ -27,7 +28,10 @@ const updateUser = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        return next(new BadRequest('Неверно указаны данные пользователя'));
+        throw next(new BadRequest('Неверно указаны данные пользователя'));
+      }
+      if (err.code === 11000) {
+        return next(new Conflict('Такой пользователь уже существует'));
       }
       return next(err);
     });
@@ -61,6 +65,9 @@ const login = (req, res, next) => {
     .then((user) => {
       const token = jwt.sign({ _id: user._id }, NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret', { expiresIn: '7d' });
       res.send({ token });
+    })
+    .catch(() => {
+      throw new Auth('Неправильные имя пользователя и/или пароль');
     })
     .catch(next);
 };

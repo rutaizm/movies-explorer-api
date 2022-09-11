@@ -3,8 +3,9 @@ const BadRequest = require('../errors/BadRequest');
 const NotFound = require('../errors/NotFound');
 
 const getMovies = (req, res, next) => {
-  Movie.find({})
-    .populate('owner')
+  const owner = req.user._id;
+
+  Movie.find({ owner })
     .then((movie) => res.send(movie))
     .catch(next);
 };
@@ -28,12 +29,12 @@ const deleteMovie = (req, res, next) => {
       if (!movie) {
         throw new NotFound('Такого фильма нет');
       }
-      if (JSON.stringify(movie.owner) !== JSON.stringify(req.user._id)) {
+      if (movie.owner.toString() !== req.user._id) {
         next(new BadRequest('Вы не можете удалить фильм, добавленный другим пользователем!'));
-      } else {
-        movie.remove()
-          .then(() => res.send({ message: 'Фильм удален' }));
       }
+      return movie.remove()
+        .then(() => res.send({ message: 'Фильм удален' }))
+        .catch(next);
     })
     .catch(next);
 };

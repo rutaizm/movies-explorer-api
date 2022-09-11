@@ -1,5 +1,14 @@
 const { celebrate, Joi } = require('celebrate');
 
+const validator = require('validator');
+
+function urlValidation(value, helpers) {
+  if (validator.isURL(value)) {
+    return value;
+  }
+  return helpers.message('Неверная ссылка');
+}
+
 const validateSignUp = celebrate({
   body: Joi.object().keys({
     email: Joi.string().required().email(),
@@ -17,7 +26,7 @@ const validateSignIn = celebrate({
 
 const validateUpdateUser = celebrate({
   body: Joi.object().keys({
-    name: Joi.string().min(2).max(30),
+    name: Joi.string().required().min(2).max(30),
     email: Joi.string().required().email(),
   }),
 });
@@ -29,11 +38,11 @@ const validateCreateMovie = celebrate({
     duration: Joi.number().required(),
     year: Joi.number().required(),
     description: Joi.string().required(),
-    image: Joi.string().uri(),
-    trailerLink: Joi.string().uri(),
+    image: Joi.string().required().custom(urlValidation),
+    trailerLink: Joi.string().required().custom(urlValidation),
     nameRU: Joi.string().required(),
     nameEN: Joi.string().required(),
-    thumbnail: Joi.string().uri(),
+    thumbnail: Joi.string().required().custom(urlValidation),
     movieId: Joi.number().required(),
   }),
 });
